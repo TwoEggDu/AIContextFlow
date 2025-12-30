@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "<PROJECT_NAME>",
+    "intent": "长期维护的工程（人+AI 协作）",
+    "status": "active",
+    "started_at": "2025-12",
+    "governance": {
+      "spec_repo": "<THIS_REPO_URL>",
+      "version": "v0.1"
+    }
+  },
+  "collaboration": {
+    "style": "long_term",
+    "constraints": [
+      "explicit over implicit",
+      "no magic behavior",
+      "preserve public APIs unless explicitly asked"
+    ],
+    "notes": "把 AI 当正式成员：遵循 ADR 与 current_intent 约束"
+  }
+}

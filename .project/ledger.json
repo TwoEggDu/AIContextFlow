@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "project-passport",
+    "intent": "把本地代码/文档打包成稳定的 Context Pack，让 AI 协作从“外包”升级为“正式成员”。并为多项目提供 .project 规范与 ADR 模板。",
+    "status": "active",
+    "started_at": "2025-12-30"
+  },
+  "collaboration": {
+    "style": "long_term",
+    "constraints": [
+      "explicit over implicit",
+      "no magic behavior",
+      "small context packs over full repos"
+    ]
+  }
+}

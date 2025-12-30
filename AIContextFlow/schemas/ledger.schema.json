@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ledger.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project",
+    "collaboration"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "intent",
+        "status"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "paused",
+            "archived"
+          ]
+        },
+        "started_at": {
+          "type": "string"
+        },
+        "home_repo": {
+          "type": "string"
+        },
+        "governance": {
+          "type": "object",
+          "properties": {
+            "spec_repo": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "collaboration": {
+      "type": "object",
+      "required": [
+        "style",
+        "constraints"
+      ],
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": [
+            "long_term",
+            "short_term"
+          ]
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

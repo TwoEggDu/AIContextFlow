@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "goal": {
+    "summary": "完成 v0.1：初始化模板 + 导出 Context Pack + 基础校验"
+  },
+  "constraints": {
+    "hard": [
+      "尽量只用 stdlib"
+    ],
+    "soft": [
+      "后续扩展 MCP 但不破坏核心路径"
+    ]
+  },
+  "do_not_do": [
+    "做成巨型框架"
+  ]
+}

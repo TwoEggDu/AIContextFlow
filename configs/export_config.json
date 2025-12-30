@@ -1,0 +1,48 @@
+{
+  "root": ".",
+  "output_dir": "./_export",
+  "include": {
+    "dirs": [
+      "."
+    ],
+    "extensions": [
+      ".py",
+      ".go",
+      ".cs",
+      ".md",
+      ".txt",
+      ".json",
+      ".yaml",
+      ".yml"
+    ]
+  },
+  "exclude": {
+    "dirs": [
+      ".git",
+      ".svn",
+      "__pycache__",
+      "node_modules",
+      "vendor",
+      "build",
+      "dist",
+      "out",
+      "_export",
+      ".idea",
+      ".vscode"
+    ],
+    "files": [
+      ".DS_Store"
+    ]
+  },
+  "bundle": {
+    "max_bytes": 800000,
+    "encoding": "utf-8"
+  },
+  "limits": {
+    "max_file_bytes": 200000
+  },
+  "output": {
+    "emit_tree": true,
+    "emit_summary": true
+  }
+}
