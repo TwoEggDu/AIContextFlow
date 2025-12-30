@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "project": {
-    "name": "project-passport",
-    "intent": "把本地代码/文档打包成稳定的 Context Pack，让 AI 协作从“外包”升级为“正式成员”。并为多项目提供 .project 规范与 ADR 模板。",
+    "name": "AIContextFlow",
+    "intent": "把本地代码/文档/决策打包成稳定的 Context Pack，让 AI 协作从“外包”升级为“正式成员”。并为多项目提供 .project 规范、ADR 模板、Context Pack 生成能力。",
     "status": "active",
     "started_at": "2025-12-30"
   },
@@ -11,7 +11,9 @@
     "constraints": [
       "explicit over implicit",
       "no magic behavior",
+      "accepted ADRs are constraints",
       "small context packs over full repos"
-    ]
+    ],
+    "notes": "CLI: aiflow；包名: ai_context_flow"
   }
 }

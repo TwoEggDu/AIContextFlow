@@ -1,17 +1,23 @@
 {
   "schema_version": 1,
   "goal": {
-    "summary": "完成 v0.1：初始化模板 + 导出 Context Pack + 基础校验"
+    "summary": "v0.1：提供项目模板、导出器、Context Pack 生成器，支撑长期多项目协作",
+    "success_criteria": [
+      "可一键 init-project 生成 .project + ADR 模板",
+      "export 支持 max_file_bytes，输出 index.json",
+      "pack 可生成 PROMPT.md + 拷贝 governance"
+    ]
   },
   "constraints": {
     "hard": [
-      "尽量只用 stdlib"
+      "尽量只用 stdlib（便于在各种环境运行）"
     ],
     "soft": [
-      "后续扩展 MCP 但不破坏核心路径"
+      "为后续 MCP 扩展预留插件位"
     ]
   },
   "do_not_do": [
-    "做成巨型框架"
+    "做成巨型框架",
+    "把所有项目代码都塞进 pack"
   ]
 }

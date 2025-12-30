@@ -1,11 +1,11 @@
 """
-project_passport.exporter
+ai_context_flow.exporter
 
-从你现有 export 脚本演进而来：
-- 兼容原有 export_config.json 结构
-- 启用 limits.max_file_bytes（原脚本里配置存在但未生效）
+从你现有 export 脚本演进：
+- 兼容 export_config.json 结构（root/output_dir/include/exclude/bundle/output/limits）
+- 正式启用 limits.max_file_bytes
 - 输出 index.txt（人读）+ index.json（机器读）
-- 对 read_error / skipped_large 做显式记录
+- 对 read_error / skipped_large 进行显式记录
 """
 
 from __future__ import annotations
@@ -16,6 +16,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
 from collections import Counter
+
+from .filters import build_rules, is_excluded
 
 FILE_HEADER_TMPL = "\n\n===== FILE: {path} =====\n"
 
@@ -48,23 +50,19 @@ class FileRecord:
 
 
 def collect_paths(root: Path, cfg: Dict) -> List[Path]:
-    include_dirs = [root / d for d in cfg["include"]["dirs"]]
-    ex_dirs = set(cfg.get("exclude", {}).get("dirs", []))
-    ex_files = set(cfg.get("exclude", {}).get("files", []))
-    exts = set(cfg["include"]["extensions"])
-
+    rules = build_rules(root, cfg)
     paths: List[Path] = []
-    for inc in include_dirs:
+
+    for inc in rules.include_dirs:
         if not inc.exists():
             continue
+
         for p in inc.rglob("*"):
             if not p.is_file():
                 continue
-            if p.name in ex_files:
+            if is_excluded(p, rules):
                 continue
-            if p.suffix not in exts:
-                continue
-            if any(part in ex_dirs for part in p.parts):
+            if p.suffix not in rules.include_exts:
                 continue
             paths.append(p)
 
@@ -120,6 +118,7 @@ def export_bundles(
         sha12 = sha256_short(p)
         rec = FileRecord(rel=str(rel), size_bytes=size_bytes, sha12=sha12)
 
+        # 超大文件：不写进 bundle，但会记录在 index/manifest
         if max_file_bytes > 0 and size_bytes > max_file_bytes:
             rec.status = "skipped_large"
             index_rows.append(rec)
@@ -154,16 +153,16 @@ def export_bundles(
     return index_rows
 
 
-def generate_summary(root: Path, paths: List[Path], out_dir: Path, *, top_n: int = 5) -> None:
+def generate_summary(root: Path, paths: List[Path], out_dir: Path, *, top_n: int = 8) -> None:
     lines: List[str] = []
     lines.append("Project")
     lines.append(f"- Name: {root.name}")
     lines.append("")
 
     ext_counter = Counter(p.suffix.lower() for p in paths if p.suffix)
-    lines.append("Languages")
+    lines.append("Extensions")
     for ext, cnt in ext_counter.most_common():
-        lines.append(f"- {ext}: {cnt} files")
+        lines.append(f"- {ext}: {cnt}")
     lines.append("")
 
     entry_candidates = []
@@ -172,7 +171,7 @@ def generate_summary(root: Path, paths: List[Path], out_dir: Path, *, top_n: int
         if name.endswith("_cli.py") or name in ("main.py", "app.py"):
             entry_candidates.append(p.relative_to(root))
 
-    lines.append("Entry Points")
+    lines.append("Entry Points (heuristic)")
     if entry_candidates:
         for p in entry_candidates:
             lines.append(f"- {p}")
@@ -181,7 +180,7 @@ def generate_summary(root: Path, paths: List[Path], out_dir: Path, *, top_n: int
     lines.append("")
 
     size_rank = sorted(paths, key=lambda p: p.stat().st_size, reverse=True)[:top_n]
-    lines.append("Key Modules (by file size)")
+    lines.append("Largest Files")
     for p in size_rank:
         rel = p.relative_to(root)
         lines.append(f"- {rel} ({p.stat().st_size} bytes)")
@@ -190,7 +189,7 @@ def generate_summary(root: Path, paths: List[Path], out_dir: Path, *, top_n: int
     (out_dir / "summary.txt").write_text("\n".join(lines), encoding="utf-8")
 
 
-def generate_tree(root: Path, paths: List[Path], out_dir: Path, *, max_depth: int = 4) -> None:
+def generate_tree(root: Path, paths: List[Path], out_dir: Path, *, max_depth: int = 5) -> None:
     rel_paths = [p.relative_to(root) for p in paths]
     tree = {}
 
@@ -216,6 +215,7 @@ def generate_tree(root: Path, paths: List[Path], out_dir: Path, *, max_depth: in
 
     lines.append(f"{root.name}/")
     walk(tree)
+
     (out_dir / "tree.txt").write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -231,7 +231,7 @@ def run_export(config_path: Path) -> Path:
     paths = collect_paths(root, cfg)
 
     max_file_bytes = int(cfg.get("limits", {}).get("max_file_bytes", 0) or 0)
-    records = export_bundles(
+    export_bundles(
         root=root,
         out_dir=out_dir,
         paths=paths,
@@ -240,7 +240,10 @@ def run_export(config_path: Path) -> Path:
         max_file_bytes=max_file_bytes,
     )
 
-    write_manifest(out_dir, cfg, records)
+    # index 里有更细的记录；manifest 给个汇总
+    records = json.loads((out_dir / "index.json").read_text(encoding="utf-8"))
+    rec_objs = [FileRecord(**r) for r in records]
+    write_manifest(out_dir, cfg, rec_objs)
 
     if cfg.get("output", {}).get("emit_summary", False):
         generate_summary(root, paths, out_dir)

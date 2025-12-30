@@ -1,9 +1,9 @@
 """
-project_passport.packer
+ai_context_flow.packer
 
-补齐为“可直接投喂”的 Context Pack：
-- 生成 PROMPT.md
-- 可选复制目标项目 .project/ 与 accepted ADR
+把导出产物补齐为“可直接投喂”的 Context Pack：
+- 生成 PROMPT.md（可粘贴给 ChatGPT/Copilot Chat）
+- 可选：复制目标项目的 .project/ 与 accepted ADR 到 out_dir
 """
 
 from __future__ import annotations
@@ -12,26 +12,26 @@ import json
 from pathlib import Path
 from typing import List
 
-
 PROMPT_TMPL = """# Context Pack Prompt (paste into ChatGPT/Copilot Chat)
 
 You are collaborating on a long-term software project.
 
 ## Hard rules
+- Read `.project/ledger.json`, `.project/decisions.json`, `.project/current_intent.json` first.
 - Treat status=accepted ADRs referenced by `.project/decisions.json` as hard constraints.
 - Prefer explicit behavior over implicit guesses.
-- Do not change public APIs unless explicitly requested.
-
-## Inputs provided in this pack
-- `manifest.json`, `index.json`, `summary.txt`, `tree.txt`
-- `bundle_*.txt` (if present)
-- `.project/*` (if included)
+- Avoid drive-by refactors.
 
 ## Current task
 {task}
 
 ## Do NOT do
 {do_not_do}
+
+## What you have
+- `manifest.json`, `index.json`, `summary.txt`, `tree.txt`
+- `bundle_*.txt` (if present)
+- `.project/*` + accepted ADRs (if included)
 """
 
 def write_prompt(out_dir: Path, *, task: str, do_not_do: List[str]) -> Path:

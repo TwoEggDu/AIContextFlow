@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "<PROJECT_NAME>",
+    "intent": "长期维护的工程（人+AI 协作）",
+    "status": "active",
+    "started_at": "YYYY-MM",
+    "governance": {
+      "spec_repo": "<AIContextFlow_REPO_URL>",
+      "version": "v0.1"
+    }
+  },
+  "collaboration": {
+    "style": "long_term",
+    "constraints": [
+      "explicit over implicit",
+      "treat accepted ADRs as hard constraints",
+      "do not change public APIs unless explicitly asked",
+      "small context packs over full repos"
+    ],
+    "notes": "把 AI 当正式成员：先读 .project 与 accepted ADR，再按 current_intent 执行"
+  }
+}

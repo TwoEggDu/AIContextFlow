@@ -3,9 +3,15 @@
   "adrs": [
     {
       "id": "ADR-001",
-      "title": ".project + ADRs act as the collaboration contract",
+      "title": ".project + ADRs are the collaboration contract",
       "status": "accepted",
       "path": "docs/adr/ADR-001-collaboration-contract.md"
+    },
+    {
+      "id": "ADR-002",
+      "title": "Context Pack export format (manifest/index/bundles/summary/tree)",
+      "status": "accepted",
+      "path": "docs/adr/ADR-002-context-pack-format.md"
     }
   ]
 }

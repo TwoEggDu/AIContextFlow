@@ -1,11 +1,13 @@
 """
-project_passport.validator
+ai_context_flow.validator
 
-v0.1 轻校验：不引入第三方 jsonschema。
-后续可加 optional dependency 做严格 JSON Schema 校验。
+v0.1 轻校验（stdlib only）：
+- 检查 schema_version 与关键字段存在
+更严格 JSON Schema 校验可在 v0.2 作为可选依赖加入。
 """
 
 from __future__ import annotations
+
 import json
 from pathlib import Path
 from typing import Tuple, List
@@ -17,7 +19,7 @@ def _load(p: Path) -> dict:
 
 def validate_ledger(p: Path) -> Tuple[bool, List[str]]:
     d = _load(p)
-    errs = []
+    errs: List[str] = []
     if "schema_version" not in d:
         errs.append("missing schema_version")
     proj = d.get("project")
@@ -31,7 +33,7 @@ def validate_ledger(p: Path) -> Tuple[bool, List[str]]:
 
 def validate_decisions(p: Path) -> Tuple[bool, List[str]]:
     d = _load(p)
-    errs = []
+    errs: List[str] = []
     if "schema_version" not in d:
         errs.append("missing schema_version")
     if "adrs" not in d or not isinstance(d["adrs"], list):
@@ -41,7 +43,7 @@ def validate_decisions(p: Path) -> Tuple[bool, List[str]]:
 
 def validate_intent(p: Path) -> Tuple[bool, List[str]]:
     d = _load(p)
-    errs = []
+    errs: List[str] = []
     if "schema_version" not in d:
         errs.append("missing schema_version")
     goal = d.get("goal")

@@ -3,12 +3,12 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "project-passport"
+name = "aicontextflow"
 version = "0.1.0"
-description = "Project governance + context pack generator for long-term human+AI collaboration."
+description = "Project governance + Context Pack generator for long-term human+AI collaboration."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text="MIT"}
 
 [project.scripts]
-project-passport = "project_passport.cli:main"
+aiflow = "ai_context_flow.cli:main"

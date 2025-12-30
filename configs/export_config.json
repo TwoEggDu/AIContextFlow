@@ -13,7 +13,14 @@
       ".txt",
       ".json",
       ".yaml",
-      ".yml"
+      ".yml",
+      ".shader",
+      ".cginc",
+      ".compute",
+      ".asmdef",
+      ".xml",
+      ".props",
+      ".targets"
     ]
   },
   "exclude": {
@@ -28,7 +35,10 @@
       "out",
       "_export",
       ".idea",
-      ".vscode"
+      ".vscode",
+      "Library",
+      "Temp",
+      "Obj"
     ],
     "files": [
       ".DS_Store"

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "",
+    "created_at": "",
+    "author": "human",
+    "expires": "soft"
+  },
+  "goal": {
+    "summary": "在此填写本次协作目标",
+    "success_criteria": []
+  },
+  "scope": {
+    "in_scope": [],
+    "out_of_scope": []
+  },
+  "constraints": {
+    "hard": [],
+    "soft": []
+  },
+  "assumptions": [],
+  "open_questions": [],
+  "do_not_do": [],
+  "deliverables": []
+}

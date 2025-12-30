@@ -1,15 +1,15 @@
 """
-project-passport CLI
+AIContextFlow CLI (`aiflow`)
 
 Commands:
-- init-project: add .project/ + docs/adr template to a target project
-- export:       run exporter from export_config.json
-- pack:         write PROMPT.md and optionally copy governance into out
+- init-project: 将 `.project/` + `docs/adr/ADR-000-template.md` 注入到目标项目
+- export:       按 export_config.json 导出 Context Pack（bundles/index/summary/tree）
+- pack:         生成 PROMPT.md，并可选复制 `.project` + accepted ADR
 
 Examples:
-  python -m project_passport.cli init-project --project-root .
-  python -m project_passport.cli export --config export_config.json
-  python -m project_passport.cli pack --project-root . --out ./_export --task "..." --do-not-do "..." --copy-governance
+  aiflow init-project --project-root .
+  aiflow export --config export_config.json
+  aiflow pack --project-root . --out ./_export --task "..." --do-not-do "..." --copy-governance
 """
 
 from __future__ import annotations
@@ -22,24 +22,28 @@ from .exporter import run_export
 from .packer import copy_governance, write_prompt
 
 
-def _copytree(src: Path, dst: Path) -> None:
+def _copytree(src: Path, dst: Path, *, force: bool) -> None:
     dst.mkdir(parents=True, exist_ok=True)
     for p in src.rglob("*"):
         rel = p.relative_to(src)
         out = dst / rel
         if p.is_dir():
             out.mkdir(parents=True, exist_ok=True)
-        else:
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(p.read_text(encoding="utf-8"), encoding="utf-8")
+            continue
+
+        out.parent.mkdir(parents=True, exist_ok=True)
+        if out.exists() and not force:
+            continue
+        out.write_text(p.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def cmd_init_project(args: argparse.Namespace) -> None:
     project_root = Path(args.project_root).resolve()
     tpl = Path(__file__).resolve().parent / "templates" / "project"
-    _copytree(tpl / ".project", project_root / ".project")
-    _copytree(tpl / "docs" / "adr", project_root / "docs" / "adr")
-    print(f"[init-project] wrote .project/ and docs/adr/ into: {project_root}")
+    _copytree(tpl / ".project", project_root / ".project", force=args.force)
+    _copytree(tpl / "docs" / "adr", project_root / "docs" / "adr", force=args.force)
+    _copytree(tpl / "docs" / "spec", project_root / "docs" / "spec", force=args.force)
+    print(f"[init-project] wrote .project/ + docs/adr/ + docs/spec/ into: {project_root}")
 
 
 def cmd_export(args: argparse.Namespace) -> None:
@@ -62,11 +66,12 @@ def cmd_pack(args: argparse.Namespace) -> None:
 
 
 def main():
-    ap = argparse.ArgumentParser("project-passport")
+    ap = argparse.ArgumentParser("aiflow")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p0 = sub.add_parser("init-project", help="init .project/ + docs/adr/ into a target project")
+    p0 = sub.add_parser("init-project", help="init .project/ + ADR template into a target project")
     p0.add_argument("--project-root", required=True)
+    p0.add_argument("--force", action="store_true", help="overwrite existing files")
     p0.set_defaults(func=cmd_init_project)
 
     p1 = sub.add_parser("export", help="export a project into bundles/index/summary/tree")
