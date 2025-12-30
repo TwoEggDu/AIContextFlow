@@ -60,3 +60,62 @@ python -m ai_context_flow.cli pack --project-root . --out ./_export   --task "�
 ## 输出格式（稳定）
 
 见 ADR：`docs/adr/ADR-002-context-pack-format.md`
+
+项目速览：
+AIContextFlow/
+├─ .github/
+│  ├─ PULL_REQUEST_TEMPLATE/
+│  │  └─ default.md
+│  └─ copilot-instructions.md
+├─ .project/                          # 本仓库自身的“协作入口”（机器可读）
+│  ├─ schemas/
+│  │  ├─ current_intent.schema.json
+│  │  ├─ decisions.schema.json
+│  │  └─ ledger.schema.json
+│  ├─ current_intent.json
+│  ├─ decisions.json
+│  └─ ledger.json
+├─ ai_context_flow/                   # Python 包：导出/打包/模板/校验/CLI
+│  ├─ schemas/
+│  │  ├─ current_intent.schema.json
+│  │  ├─ decisions.schema.json
+│  │  └─ ledger.schema.json
+│  ├─ templates/
+│  │  └─ project/                     # 给“别的项目”注入用的模板
+│  │     ├─ .project/
+│  │     │  ├─ schemas/
+│  │     │  │  ├─ current_intent.schema.json
+│  │     │  │  ├─ decisions.schema.json
+│  │     │  │  └─ ledger.schema.json
+│  │     │  ├─ current_intent.json
+│  │     │  ├─ decisions.json
+│  │     │  └─ ledger.json
+│  │     └─ docs/
+│  │        ├─ adr/
+│  │        │  └─ ADR-000-template.md
+│  │        └─ spec/
+│  │           └─ collaboration-spec.md
+│  ├─ __init__.py
+│  ├─ cli.py                          # init-project / export / pack
+│  ├─ exporter.py                     # 生成 bundles/index/manifest/summary/tree
+│  ├─ filters.py                      # 过滤规则/白黑名单（预留扩展点）
+│  ├─ packer.py                       # 生成 PROMPT.md + 可选复制 governance/ADR
+│  └─ validator.py                    # v0.1 轻校验（stdlib）
+├─ configs/
+│  └─ export_config.json              # exporter 示例配置
+├─ docs/
+│  ├─ adr/                            # 本仓库自己的 ADR（治理本仓库本身）
+│  │  ├─ ADR-001-collaboration-contract.md
+│  │  └─ ADR-002-context-pack-format.md
+│  └─ spec/                           # 规范/设计/路线图
+│     ├─ copilot-guide.md
+│     ├─ design-overview.md
+│     └─ mcp-roadmap.md
+├─ examples/
+│  ├─ current_intent.example.json
+│  ├─ decisions.example.json
+│  └─ ledger.example.json
+├─ LICENSE
+├─ pyproject.toml
+└─ README.md
+
